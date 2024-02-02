@@ -1,0 +1,97 @@
+<div id="graphContainer" style="margin:auto;"></div>
+
+<script defer>
+
+    const svgns = "http://www.w3.org/2000/svg";
+
+    let viewPortMaxUnitX = 1000;
+
+    let viewPortMaxUnitY = 1000;
+
+    let viewport = null;
+
+    init_UI();
+
+    function init_UI() {
+        insertViewPort("graphContainer");
+        diagram();
+    }
+
+    function insertViewPort(containerId) {
+        viewport = document.createElementNS(svgns, "svg");
+        viewport.setAttribute("id", "viewport");
+        viewport.setAttribute("viewBox", "0 0 " + viewPortMaxUnitX + " " + viewPortMaxUnitY);
+        document.getElementById(containerId).appendChild(viewport);
+    }
+
+    function diagram() {
+        let mois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+        let ventes = [6500, 5550, 4200, 4525, 2500, 1500, 500, 1000, 1750, 2300, 3700, 3500];
+
+        viewport.appendChild(text(0.45 * viewPortMaxUnitX, 0.1 * viewPortMaxUnitY, 'Ventes 2023', 2));
+
+        for (let i = 0; i < 71; i++) {
+
+            if (i % 10 == 0) {
+                viewport.appendChild(line(175, ((10 * i) + 200), 875, (10 * i) + 200, "black", 2))
+                if (i == 70) {
+                    viewport.appendChild(text(155, (10 * i) + 200, `$ ${(70 - i) * 100}`, 1))
+                }
+                else {
+                    viewport.appendChild(text(130, (10 * i) + 200, `$ ${(70 - i) * 100}`, 1))
+                }
+            }
+            else {
+                viewport.appendChild(line(175, (10 * i) + 200, 875, (10 * i) + 200, "gray", 1))
+            }
+        }
+
+        for (let i = 0; i < mois.length; i++) {
+            viewport.appendChild(text((i * 57.5) + 187.5, 925, `${mois[i]}`, 1, "black", 45))
+            viewport.appendChild(text((i * 57.5) + 187.5, 895 - (((ventes[i] / 100) * 10)), `$${ventes[i]}`, 1, "black", 0))
+            if (ventes[i] >= 4500) {
+                viewport.appendChild(rect((i * 57.5) + 187.5, 900 - (((ventes[i] / 100) * 10)), 40, (((ventes[i] / 100) * 10)), "green", "black", 1))
+            }
+            else if (ventes[i] < 4500 && ventes[i] > 2500) {
+                viewport.appendChild(rect((i * 57.5) + 187.5, 900 - (((ventes[i] / 100) * 10)), 40, (((ventes[i] / 100)) * 10), "yellow", "black", 1))
+            }
+
+            else if (ventes[i] > 1000 && ventes[i] <= 2500) {
+                viewport.appendChild(rect((i * 57.5) + 187.5, 900 - (((ventes[i] / 100) * 10)), 40, (((ventes[i] / 100)) * 10), "orange", "black", 1))
+            }
+            else {
+                viewport.appendChild(rect((i * 57.5) + 187.5, 900 - (((ventes[i] / 100) * 10)), 40, (((ventes[i] / 100)) * 10), "red", "black", 1))
+            }
+
+        }
+    }
+
+    function line(x1, y1, x2, y2, stroke = "black", strokeWidth = 1) {
+        let line = document.createElementNS(svgns, "line");
+        line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+        line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+        line.setAttribute("stroke", stroke);
+        line.setAttribute("stroke-width", strokeWidth);
+        return line;
+    }
+
+
+    function rect(x, y, width, height, fill = "white", stroke = "black", strokeWidth = 1) {
+        let rect = document.createElementNS(svgns, "rect");
+        rect.setAttribute("x", x); rect.setAttribute("y", y);
+        rect.setAttribute("width", width); rect.setAttribute("height", height);
+        rect.setAttribute("fill", fill); rect.setAttribute("stroke", stroke);
+        rect.setAttribute("stroke-width", strokeWidth);
+        return rect;
+    }
+
+    function text(x, y, content, size = "1", fill = "black", angle) {
+        let text = document.createElementNS(svgns, "text");
+        text.setAttribute("x", x); text.setAttribute("y", y);
+        text.setAttribute("transform", `rotate(${angle},${x},${y})`);
+        text.setAttribute("font-size", size + "em");
+        text.setAttribute("fill", fill);
+        text.innerHTML = content;
+        return text;
+    }
+</script>
